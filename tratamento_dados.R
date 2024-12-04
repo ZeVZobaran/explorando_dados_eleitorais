@@ -47,7 +47,7 @@ perfil_2018 <- perfil_2018_raw %>%
 
 
 
-dir_votos_2018 <- './dados/dados_brutos_tse/votaçao_presidente/planilhas/votacao_secao_2018_BR.csv'
+dir_votos_2018 <- 'C:/Users/josez/Desktop/Economia/Politica Brasil/explorando_dados_eleitorais/dados/dados_brutos_tse/votacao_presidente/planilhas/votacao_secao_2018_BR.csv'
 votos_2018_raw <- read_csv2(dir_votos_2018, locale = locale(encoding = "latin1"))
 colnames((votos_2018))
 
@@ -56,6 +56,25 @@ votos_2018 <- votos_2018_raw %>%
   arrange(NR_TURNO, SG_UF, CD_MUNICIPIO, NM_MUNICIPIO, NR_ZONA, NM_VOTAVEL) %>%
   group_by(NR_TURNO, SG_UF, CD_MUNICIPIO, NM_MUNICIPIO, NR_ZONA, NM_VOTAVEL) %>%
   summarise(VOTOS = sum(QT_VOTOS)) %>%
-  spread(key = NM_VOTAVEL, value = VOTOS)  # Tidy, cada candidato como uma variavel
+  spread(key = NM_VOTAVEL, value = VOTOS) # Cada candidato como uma variavel
 
-  
+ELEITORES = tibble(rowSums(votos_2018[6:21], na.rm = TRUE))
+colnames(ELEITORES) = 'ELEITORES'
+
+votos_2018 <- votos_2018 %>%
+  bind_cols(ELEITORES)
+
+
+teste_2018 <- votos_2018 %>%
+  group_by(CD_MUNICIPIO) %>%
+  filter(NR_TURNO == 1)
+
+write_csv(
+  votos_2018,
+  'C:/Users/josez/Desktop/Economia/Politica Brasil/explorando_dados_eleitorais/dados/dados_formatados/full_tse_2018.csv'
+)
+
+
+
+
+
